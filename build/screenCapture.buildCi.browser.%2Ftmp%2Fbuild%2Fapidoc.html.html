@@ -833,7 +833,23 @@ shift', 'splice', 'unset', 'unshift'].forEach(bootstrap);
   // Updating relevant node
   this.update();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+      };
+
+      var walk = function walk(data) {
+        var p = arguments.length &lt;= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+        // Should we sit a monkey in the tree?
+        if (data instanceof _monkey.MonkeyDefinition || data instanceof _monkey.Monkey) {
+var monkeyInstance = new _monkey.<span class="apidocCodeKeywordSpan">Monkey</span>(_this2, p, data instanceof _monkey.Monkey ? data
+.definition : data);
+
+(0, _update3['default'])(_this2._monkeys, p, { type: 'set', value: monkeyInstance }, {
+  immutable: false,
+  persistent: false,
+  pure: false
+});
+...</pre></li>
     </ul>
 
 
@@ -886,7 +902,24 @@ shift', 'splice', 'unset', 'unshift'].forEach(bootstrap);
   // Does the definition contain dynamic paths
   this.hasDynamicPaths = this.paths.some(_type2['default'].dynamicPath);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Baobab.monkey = function () {
+ for (var _len = arguments.length, args = Array(_len), _key = 0; _key &lt; _len; _key++) {
+   args[_key] = arguments[_key];
+ }
+
+ if (!args.length) throw new Error('Baobab.monkey: missing definition.');
+
+ if (args.length === 1 &amp;&amp; typeof args[0] !== 'function') return new _monkey.<span class="apidocCodeKeywordSpan
+">MonkeyDefinition</span>(args[0]);
+
+ return new _monkey.MonkeyDefinition(args);
+};
+Baobab.dynamicNode = Baobab.monkey;
+
+/**
+* Exposing some internals for convenience
+...</pre></li>
     </ul>
 
 
@@ -1786,7 +1819,23 @@ var newList = cursor.select('one', 'two').unshift(newValue);
   this.size = size;
   this.records = [];
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  this.state.recording = true;
+
+  if (this.archive) return this;
+
+  // Lazy binding
+  this._lazyBind();
+
+  this.archive = new _helpers.<span class="apidocCodeKeywordSpan">Archive</span>(maxRecords);
+  return this;
+}
+
+/**
+ * Methods stopping to record the cursor's successive states.
+ *
+ * @return {Cursor} - The cursor instance for chaining purposes.
+...</pre></li>
     </ul>
 
 
@@ -1904,21 +1953,21 @@ var newList = cursor.select('one', 'two').deepMerge({user: {name: 'John'}});
     <ul>
     <li>description and source-code<pre class="apidocCodePre">freeze = function () { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ * @param  {boolean} deep - Should we recursively freeze the given objects?
+ * @param  {object}  o    - The variable to freeze.
+ * @return {object}    - The merged object.
  */
 function freezer(deep, o) {
-  if (typeof o !== 'object' ||
-  o === null ||
-  o instanceof Monkey)
-return;
+  if (typeof o !== 'object' || o === null || o instanceof _monkey.Monkey) return;
 
   Object.<span class="apidocCodeKeywordSpan">freeze</span>(o);
 
-  if (!deep)
-return;
+  if (!deep) return;
 
   if (Array.isArray(o)) {
 
 // Iterating through the elements
+var i = undefined,
 ...</pre></li>
     </ul>
 
@@ -2191,21 +2240,22 @@ var newList = cursor.splice([1, 0, 'newItem1', 'newItem2']);
   return Array.isArray(target);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-super();
+
+_get(Object.getPrototypeOf(Baobab.prototype), 'constructor', this).call(this);
 
 // Setting initialData to an empty object if no data is provided by use
-if (arguments.length &lt; 1)
-  initialData = {};
+if (arguments.length &lt; 1) initialData = {};
 
 // Checking whether given initial data is valid
-if (!type.object(initialData) &amp;&amp; !type.<span class="apidocCodeKeywordSpan">array</span>(initialData))
-  throw makeError('Baobab: invalid data.', {data: initialData});
+if (!_type2['default'].object(initialData) &amp;&amp; !_type2['default'].<span class="apidocCodeKeywordSpan
+">array</span>(initialData)) throw makeError('Baobab: invalid data.', { data: initialData });
 
 // Merging given options with defaults
 this.options = shallowMerge({}, DEFAULTS, opts);
 
 // Disabling immutability &amp; persistence if persistence if disabled
 if (!this.options.persistent) {
+  this.options.immutable = false;
 ...</pre></li>
     </ul>
 
@@ -2231,14 +2281,15 @@ this.state = {
 };
 
 // Checking whether the given path is dynamic or not
-this._dynamicPath = type.<span class="apidocCodeKeywordSpan">dynamicPath</span>(this.path);
+this._dynamicPath = _type2['default'].<span class="apidocCodeKeywordSpan">dynamicPath</span>(this.path);
 
 // Checking whether the given path will meet a monkey
-this._monkeyPath = type.monkeyPath(this.tree._monkeys, this.path);
+this._monkeyPath = _type2['default'].monkeyPath(this.tree._monkeys, this.path);
 
-if (!this._dynamicPath)
-  this.solvedPath = this.path;
-else
+if (!this._dynamicPath) this.solvedPath = this.path;else this.solvedPath = (0, _helpers.getIn)(this.tree._data, this.path).solvedPath
+;
+
+/**
 ...</pre></li>
     </ul>
 
@@ -2288,21 +2339,21 @@ function hashPath(path) {
   return descriptor &amp;&amp; descriptor.get &amp;&amp; descriptor.get.isLazyGetter === true;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-let i, l, k;
+    l = undefined,
+    k = undefined;
 
 // NOTE: could be possible to erase computed properties through `null`.
-const props = Object.getOwnPropertyNames(item);
+var props = Object.getOwnPropertyNames(item);
 for (i = 0, l = props.length; i &lt; l; i++) {
   k = props[i];
-  if (type.<span class="apidocCodeKeywordSpan">lazyGetter</span>(item, k)) {
+  if (_type2['default'].<span class="apidocCodeKeywordSpan">lazyGetter</span>(item, k)) {
     Object.defineProperty(o, k, {
       get: Object.getOwnPropertyDescriptor(item, k).get,
       enumerable: true,
       configurable: true
     });
-  }
-  else {
+  } else {
+    Object.defineProperty(o, k, {
 ...</pre></li>
     </ul>
 
@@ -2339,20 +2390,21 @@ cursors).every(function (k) {
   return null;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
- * otherwise ordinary data.
- *
- * @constructor
- * @param {array|object} definition - The formal definition of the monkey.
  */
-export class MonkeyDefinition {
-  constructor(definition) {
-const monkeyType = type.<span class="apidocCodeKeywordSpan">monkeyDefinition</span>(definition);
 
-if (!monkeyType)
-  throw makeError(
-    'Baobab.monkey: invalid definition.',
-    {definition}
-  );
+var MonkeyDefinition = function MonkeyDefinition(definition) {
+var _this = this;
+
+_classCallCheck(this, MonkeyDefinition);
+
+var monkeyType = _type2['default'].<span class="apidocCodeKeywordSpan">monkeyDefinition</span>(definition);
+
+if (!monkeyType) throw (0, _helpers.makeError)('Baobab.monkey: invalid definition.', { definition: definition });
+
+this.type = monkeyType;
+
+if (this.type === 'object') {
+  this.getter = definition.get;
 ...</pre></li>
     </ul>
 
@@ -2385,21 +2437,21 @@ if (!monkeyType)
   return null;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+
 // If we couldn't solve the path, we throw
-if (!solvedPath)
-  throw makeError('Baobab.update: could not solve the given path.', {
-    path: solvedPath
-  });
+if (!solvedPath) throw makeError('Baobab.update: could not solve the given path.', {
+  path: solvedPath
+});
 
 // Read-only path?
-const monkeyPath = type.<span class="apidocCodeKeywordSpan">monkeyPath</span>(this._monkeys, solvedPath);
-if (monkeyPath &amp;&amp; solvedPath.length &gt; monkeyPath.length)
-  throw makeError('Baobab.update: attempting to update a read-only path.', {
-    path: solvedPath
-  });
+var monkeyPath = _type2['default'].<span class="apidocCodeKeywordSpan">monkeyPath</span>(this._monkeys, solvedPath);
+if (monkeyPath &amp;&amp; solvedPath.length &gt; monkeyPath.length) throw makeError('Baobab.update: attempting to update
+ a read-only path.', {
+  path: solvedPath
+});
 
 // We don't unset irrelevant paths
-if (operation.type === 'unset' &amp;&amp; !exists)
+if (operation.type === 'unset' &amp;&amp; !exists) return;
 ...</pre></li>
     </ul>
 
@@ -2432,21 +2484,22 @@ if (operation.type === 'unset' &amp;&amp; !exists)
 ) &amp;&amp; !(typeof Map === 'function' &amp;&amp; target instanceof Map) &amp;&amp; !(typeof Set === 'function' &amp;&amp; target instanceof Set);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
- * array.
- *
- * @param  {array}  path - The path to hash.
- * @return {string} string - The resultant hash.
- */
+* array.
+*
+* @param  {array}  path - The path to hash.
+* @return {string} string - The resultant hash.
+*/
 function hashPath(path) {
-  return 'Î»' + path.map(step =&gt; {
-    if (type.function(step) || type.<span class="apidocCodeKeywordSpan">object</span>(step))
-      return `#${uniqid()}#`;
+ return 'Î»' + path.map(function (step) {
+   if (_type2['default']['function'](step) || _type2['default'].<span class="apidocCodeKeywordSpan
+">object</span>(step)) return '#' + uniqid() + '#';
 
-    return step;
-  }).join('Î»');
+   return step;
+ }).join('Î»');
 }
 
 /**
+* Baobab class
 ...</pre></li>
     </ul>
 
@@ -2463,21 +2516,22 @@ function hashPath(path) {
   return typeof string === 'string' &amp;&amp; !! ~VALID_OPERATIONS.indexOf(string);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-   * @return {mixed} - Return the result of the update.
-   */
-  update(path, operation) {
+    key: 'update',
+    value: function update(path, operation) {
+var _this3 = this;
 
 // Coercing path
 path = coercePath(path);
 
-if (!type.<span class="apidocCodeKeywordSpan">operationType</span>(operation.type))
-  throw makeError(
-    `Baobab.update: unknown operation type "${operation.type}".`,
-    {operation}
-  );
+if (!_type2['default'].<span class="apidocCodeKeywordSpan">operationType</span>(operation.type)) throw makeError('
+;Baobab.update: unknown operation type "' + operation.type + '".', { operation: operation });
 
 // Solving the given path
-const {solvedPath, exists} = getIn(
+
+var _getIn = getIn(this._data, path);
+
+var solvedPath = _getIn.solvedPath;
+var exists = _getIn.exists;
 ...</pre></li>
     </ul>
 
@@ -2498,21 +2552,22 @@ const {solvedPath, exists} = getIn(
   });
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+// If no path is given, we simply return the root
 path = path || [];
 
 // Variadic
-if (arguments.length &gt; 1)
-  path = arrayFrom(arguments);
+if (arguments.length &gt; 1) path = arrayFrom(arguments);
 
 // Checking that given path is valid
-if (!type.<span class="apidocCodeKeywordSpan">path</span>(path))
-  throw makeError('Baobab.select: invalid path.', {path});
+if (!_type2['default'].<span class="apidocCodeKeywordSpan">path</span>(path)) throw makeError('Baobab.select: invalid
+ path.', { path: path });
 
 // Casting to array
 path = [].concat(path);
 
 // Computing hash (done here because it would be too late to do it in the
 // cursor's constructor since we need to hit the cursors' index first).
+var hash = hashPath(path);
 ...</pre></li>
     </ul>
 
@@ -2529,14 +2584,14 @@ path = [].concat(path);
   return target !== Object(target);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-/**
  * Method returning whether the cursor is at leaf level.
  *
  * @return {boolean} - Is the cursor a leaf?
  */
-isLeaf() {
-  return type.<span class="apidocCodeKeywordSpan">primitive</span>(this._get().data);
+  }, {
+key: 'isLeaf',
+value: function isLeaf() {
+  return _type2['default'].<span class="apidocCodeKeywordSpan">primitive</span>(this._get().data);
 }
 
 /**
@@ -2595,20 +2650,22 @@ isLeaf() {
   });
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-   * Method used to refresh the watcher's mapping.
-   *
-   * @param  {object}  mapping  - The new mapping to apply.
-   * @return {Watcher}          - Itself for chaining purposes.
-   */
-  refresh(mapping) {
+     * @param  {object}  mapping  - The new mapping to apply.
+     * @return {Watcher}          - Itself for chaining purposes.
+     */
+  }, {
+    key: 'refresh',
+    value: function refresh(mapping) {
 
-if (!type.<span class="apidocCodeKeywordSpan">watcherMapping</span>(mapping))
-  throw makeError('Baobab.watch: invalid mapping.', {mapping});
+if (!_type2['default'].<span class="apidocCodeKeywordSpan">watcherMapping</span>(mapping)) throw (0, _helpers.makeError
+)('Baobab.watch: invalid mapping.', { mapping: mapping });
 
 this.mapping = mapping;
 
 // Creating the get method
-const projection = {};
+var projection = {};
+
+for (var k in mapping) {
 ...</pre></li>
     </ul>
 
