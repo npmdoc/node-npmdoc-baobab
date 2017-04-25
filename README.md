@@ -1,6 +1,6 @@
 # npmdoc-baobab
 
-#### api documentation for  [baobab (v2.4.3)](https://github.com/Yomguithereal/baobab)  [![npm package](https://img.shields.io/npm/v/npmdoc-baobab.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-baobab) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-baobab.svg)](https://travis-ci.org/npmdoc/node-npmdoc-baobab)
+#### basic api documentation for  [baobab (v2.4.3)](https://github.com/Yomguithereal/baobab)  [![npm package](https://img.shields.io/npm/v/npmdoc-baobab.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-baobab) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-baobab.svg)](https://travis-ci.org/npmdoc/node-npmdoc-baobab)
 
 #### JavaScript persistent data tree with cursors.
 
@@ -81,7 +81,8 @@
         "prepublish": "npm run dist",
         "test": "mocha -R spec --compilers js:babel/register ./test/endpoint.js"
     },
-    "version": "2.4.3"
+    "version": "2.4.3",
+    "bin": {}
 }
 ```
 
